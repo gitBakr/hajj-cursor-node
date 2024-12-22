@@ -1,0 +1,15 @@
+### Test de base
+GET http://localhost:8000/api/packages
+
+### Login Admin
+POST http://localhost:8000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin11@example.com",
+    "password": "admin123"
+}
+
+### Test packages avec token
+GET http://localhost:8000/api/admin/packages/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzY4MTAwM2VlYjE1OWU5OGExYmU5NzYiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzQ4NzMxMTMsImV4cCI6MTczNDk1OTUxM30.2f3EGfWBO_pVKUuXtiFx8iNEVKTbz0ml6k3es4jKdeQ 

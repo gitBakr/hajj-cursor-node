@@ -1,0 +1,159 @@
+### Variables globales
+@baseUrl = http://localhost:8000/api
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...  # À remplacer après login
+
+GET http://localhost:8000/api/packages
+### Auth Routes
+### Login Admin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@example.com",
+    "password": "admin123"
+}
+
+### Register New User
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "firstName": "Test",
+    "lastName": "User",
+    "email": "test@example.com",
+    "password": "test123",
+    "phoneNumber": "+33612345678"
+}
+
+### Public Package Routes
+### Get All Packages
+GET {{baseUrl}}/packages
+
+### Get Upcoming Packages
+GET {{baseUrl}}/packages/upcoming
+
+### Search Packages (Omra)
+GET {{baseUrl}}/packages/search?type=omra
+
+### Search Packages (Hajj)
+GET {{baseUrl}}/packages/search?type=hajj
+
+### Search Packages with Price Range
+GET {{baseUrl}}/packages/search?minPrice=2000&maxPrice=5000
+
+### Get Package Details
+GET {{baseUrl}}/packages/[package_id]
+
+### Admin Package Routes
+### Get All Packages (Admin)
+GET {{baseUrl}}/admin/packages/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+
+### Create New Package
+POST {{baseUrl}}/admin/packages
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "type": "omra",
+    "title": "Omra Avril 2024",
+    "description": "Omra spéciale printemps",
+    "duration": 12,
+    "startDate": "2024-04-15",
+    "endDate": "2024-04-27",
+    "price": 3200,
+    "capacity": 35,
+    "includes": [
+        "Vol direct aller-retour",
+        "Hôtel 5* à Médine",
+        "Hôtel 5* à La Mecque",
+        "Transferts privés"
+    ],
+    "itinerary": [
+        { "day": 1, "description": "Départ de Paris" },
+        { "day": 2, "description": "Arrivée à Médine" }
+    ]
+}
+
+### Update Package
+PUT {{baseUrl}}/admin/packages/[package_id]
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "price": 3300,
+    "remainingSpots": 30
+}
+
+### Update Package Status
+PATCH {{baseUrl}}/admin/packages/[package_id]/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "status": "inactive"
+}
+
+### Delete Package
+DELETE {{baseUrl}}/admin/packages/[package_id]
+Authorization: Bearer {{adminToken}}
+
+### Booking Routes
+### Create Booking
+POST {{baseUrl}}/bookings/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "packageId": "[package_id]",
+    "passengerDetails": [
+        {
+            "firstName": "Mohammed",
+            "lastName": "Ali",
+            "passportNumber": "AB123456",
+            "dateOfBirth": "1990-01-01"
+        }
+    ],
+    "contactEmail": "mohammed@example.com",
+    "contactPhone": "+33612345678",
+    "totalPrice": 2500
+}
+
+### Verify Booking
+POST {{baseUrl}}/bookings/verify
+Content-Type: application/json
+
+{
+    "bookingNumber": 605,
+    "email": "mohammed@example.com"
+}
+
+### Get User Bookings
+GET {{baseUrl}}/bookings/user-bookings
+Authorization: Bearer {{adminToken}}
+
+### Admin Booking Routes
+### Get All Bookings (Admin)
+GET {{baseUrl}}/admin/bookings
+Authorization: Bearer {{adminToken}}
+
+### Get Booking Stats (Admin)
+GET {{baseUrl}}/admin/bookings/stats
+Authorization: Bearer {{adminToken}}
+
+### Update Booking Status (Admin)
+PATCH {{baseUrl}}/admin/bookings/[booking_id]/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "status": "confirmed"
+}
+###  (Admin)
+POST http://localhost:8000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin11@example.com",
+    "password": "admin123"
+}
