@@ -1,0 +1,206 @@
+@baseUrl = https://hajj-cursor-node.onrender.com/api
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzY4MTAwM2VlYjE1OWU5OGExYmU5NzYiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzQ4NzkzMDgsImV4cCI6MTczNDk2NTcwOH0.qPkTpU56UH0LRmRWOmaszwfcghkVUdOSa18gWToqSAw
+
+### 1. ERREURS D'AUTHENTIFICATION ###
+
+### Login avec email invalide
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "nonexistent@example.com",
+    "password": "test123"
+}
+
+### Login avec mot de passe incorrect
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin11@example.com",
+    "password": "wrongpassword"
+}
+
+### 2. ERREURS DE RÉSERVATION ###
+
+### Réservation avec package inexistant
+POST {{baseUrl}}/bookings/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "packageId": "invalid_id",
+    "passengerDetails": [
+        {
+            "firstName": "Test",
+            "lastName": "User",
+            "passportNumber": "AB123456",
+            "dateOfBirth": "1990-01-01"
+        }
+    ],
+    "contactEmail": "test@example.com",
+    "contactPhone": "+33612345678",
+    "totalPrice": 8500
+}
+
+### Réservation avec données manquantes
+POST {{baseUrl}}/bookings/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "packageId": "67682aa062a85c73e6580097",
+    "passengerDetails": [
+        {
+            "firstName": "Test",
+            "lastName": "User"
+            // Manque passportNumber et dateOfBirth
+        }
+    ],
+    "contactEmail": "test@example.com"
+    // Manque totalPrice et contactPhone
+}
+
+### 3. ERREURS DE VALIDATION ###
+
+### Réservation avec date de naissance future
+POST {{baseUrl}}/bookings/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "packageId": "67682aa062a85c73e6580097",
+    "passengerDetails": [
+        {
+            "firstName": "Test",
+            "lastName": "User",
+            "passportNumber": "AB123456",
+            "dateOfBirth": "2025-01-01"
+        }
+    ],
+    "contactEmail": "test@example.com",
+    "contactPhone": "+33612345678",
+    "totalPrice": 8500
+}
+
+### Réservation avec numéro de téléphone invalide
+POST {{baseUrl}}/bookings/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "packageId": "67682aa062a85c73e6580097",
+    "passengerDetails": [
+        {
+            "firstName": "Test",
+            "lastName": "User",
+            "passportNumber": "AB123456",
+            "dateOfBirth": "1990-01-01"
+        }
+    ],
+    "contactEmail": "test@example.com",
+    "contactPhone": "123", // Format invalide
+    "totalPrice": 8500
+}
+
+### 4. ERREURS D'AUTORISATION ###
+
+### Accès admin sans token
+GET {{baseUrl}}/admin/bookings
+
+### Accès admin avec token invalide
+GET {{baseUrl}}/admin/bookings
+Authorization: Bearer invalid_token
+
+### 5. ERREURS DE CAPACITÉ ###
+
+### Réservation dépassant la capacité du package
+POST {{baseUrl}}/bookings/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "packageId": "67682aa062a85c73e6580097",
+    "passengerDetails": [
+        // 40 passagers (plus que la capacité)
+        // ... répété 40 fois
+    ],
+    "contactEmail": "test@example.com",
+    "contactPhone": "+33612345678",
+    "totalPrice": 340000
+} 
+
+### Test Réservation Minimale
+POST {{baseUrl}}/bookings/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "packageId": "67682aa062a85c73e6580097",
+    "passengerDetails": [
+        {
+            "firstName": "Karim",
+            "lastName": "Benzema"
+        },
+        {
+            "firstName": "Sarah",
+            "lastName": "Benzema",
+            "passportNumber": "FR789456",
+            "dateOfBirth": "1995-06-15T00:00:00.000Z"
+        }
+    ],
+    "contactEmail": "karim.benzema@example.com",
+    "contactPhone": "+33678901234",
+    "totalPrice": 17000
+}
+
+### Réservation Complète (Tous les champs)
+POST {{baseUrl}}/bookings/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "packageId": "67682aa062a85c73e6580097",
+    
+    "passengerDetails": [
+        {
+            // Premier passager (tous les champs)
+            "firstName": "Mohammed",
+            "lastName": "Benzema",
+            "passportNumber": "FR123456",
+            "dateOfBirth": "1990-05-15T00:00:00.000Z",
+            "medicalNeeds": "Diabétique type 2",
+            "dietaryRestrictions": "Halal strict"
+        },
+        {
+            // Deuxième passager (tous les champs)
+            "firstName": "Fatima",
+            "lastName": "Benzema",
+            "passportNumber": "FR789012",
+            "dateOfBirth": "1992-08-20T00:00:00.000Z",
+            "medicalNeeds": "Aucun",
+            "dietaryRestrictions": "Végétarien"
+        },
+        {
+            // Troisième passager (champs minimaux)
+            "firstName": "Youssef",
+            "lastName": "Benzema"
+        }
+    ],
+
+    // Informations de contact (obligatoires)
+    "contactEmail": "mohammed.benzema@example.com",
+    "contactPhone": "+33678901234",
+    "totalPrice": 25500,
+
+    // Informations supplémentaires (optionnelles)
+    "specialRequests": "Chambre famille, proche des ascenseurs, vue sur Haram si possible",
+    "notes": "Premier Hajj pour toute la famille, besoin d'assistance pour les rituels",
+
+    // Préférences additionnelles (optionnelles)
+    "preferences": {
+        "mealType": "Halal",
+        "seatingPreference": "Famille ensemble",
+        "roomPreference": "Non-fumeur"
+    }
+}
