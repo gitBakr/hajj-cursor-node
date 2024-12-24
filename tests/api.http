@@ -1,0 +1,258 @@
+@baseUrl = https://hajj-cursor-node.onrender.com/api
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzY4MTAwM2VlYjE1OWU5OGExYmU5NzYiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzQ4NzkzMDgsImV4cCI6MTczNDk2NTcwOH0.qPkTpU56UH0LRmRWOmaszwfcghkVUdOSa18gWToqSAw
+
+### Test si le serveur est en ligne
+GET {{baseUrl}}/test
+
+### 1. AUTHENTIFICATION ###
+
+### Login Admin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin11@example.com",
+    "password": "admin123"
+}
+
+### Register New User
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "firstName": "Test",
+    "lastName": "User",
+    "email": "test13@example.com",
+    "password": "test123",
+    "phoneNumber": "+33612345678"
+}
+
+### 2. PACKAGES PUBLICS ###
+
+### Liste des packages
+GET {{baseUrl}}/packages
+
+### Recherche packages Omra
+GET {{baseUrl}}/packages/search?type=omra
+
+### Recherche packages Hajj
+GET {{baseUrl}}/packages/search?type=hajj
+
+### Recherche par prix
+GET {{baseUrl}}/packages/search?minPrice=2000&maxPrice=5000
+
+### Détails d'un package
+GET {{baseUrl}}/packages/[package_id]
+
+### 3. ADMIN PACKAGES ###
+
+### Liste tous les packages (Admin)
+GET {{baseUrl}}/admin/packages/all
+Authorization: Bearer {{adminToken}}
+
+### Créer un package
+POST {{baseUrl}}/admin/packages
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "type": "omra",
+    "title": "Omra Ramadan 2024",
+    "description": "Omra spéciale pendant le mois sacré",
+    "duration": 15,
+    "startDate": "2024-03-15",
+    "endDate": "2024-03-30",
+    "price": 3500,
+    "capacity": 30,
+    "includes": [
+        "Vol direct aller-retour",
+        "Hôtels 5* vue sur Haram",
+        "Transferts VIP",
+        "Guide expérimenté"
+    ],
+    "itinerary": [
+        { "day": 1, "description": "Départ de Paris" },
+        { "day": 2, "description": "Arrivée à La Mecque" }
+    ]
+}
+
+### Modifier le package Hajj 2026
+PUT {{baseUrl}}/admin/packages/67682aa062a85c73e6580097
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "price": 8500,
+    "remainingSpots": 30,
+    "description": "Programme Hajj 2026 avec excellent rapport qualité-prix - Places limitées"
+}
+
+### 4. RÉSERVATIONS ###
+
+### Créer une réservation
+POST {{baseUrl}}/bookings/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "packageId": "67682aa062a85c73e6580097",
+    "passengerDetails": [
+        {
+            "firstName": "Mohammed",
+            "lastName": "Ali",
+            "passportNumber": "AB123456",
+            "dateOfBirth": "1990-01-01"
+        }
+    ],
+    "contactEmail": "mohammed@example.com",
+    "contactPhone": "+33612345678",
+    "totalPrice": 8500
+}
+
+### Créer une réservation multiple
+POST {{baseUrl}}/bookings/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "packageId": "67682aa062a85c73e6580097",
+    "passengerDetails": [
+        {
+            "firstName": "Mohammed",
+            "lastName": "Ali",
+            "passportNumber": "AB123456",
+            "dateOfBirth": "1990-01-01"
+        },
+        {
+            "firstName": "Fatima",
+            "lastName": "Ali",
+            "passportNumber": "AB123457",
+            "dateOfBirth": "1992-03-15"
+        }
+    ],
+    "contactEmail": "mohammed@example.com",
+    "contactPhone": "+33612345678",
+    "totalPrice": 17000
+}
+
+### Créer une réservation test
+POST {{baseUrl}}/bookings/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "packageId": "67682aa062a85c73e6580097",
+    "passengerDetails": [
+        {
+            "firstName": "Mohammed",
+            "lastName": "Ali",
+            "passportNumber": "AB123456",
+            "dateOfBirth": "1990-01-01"
+        }
+    ],
+    "contactEmail": "mohammed@example.com",
+    "contactPhone": "+33612345678",
+    "totalPrice": 8500
+}
+
+### Vérifier la réservation
+POST {{baseUrl}}/bookings/verify
+Content-Type: application/json
+
+{
+    "bookingNumber": "379",
+    "email": "mohammed@example.com"
+}
+
+### Liste des réservations (Admin)
+GET {{baseUrl}}/admin/bookings
+Authorization: Bearer {{adminToken}}
+
+### Statistiques des réservations (Admin)
+GET {{baseUrl}}/admin/bookings/stats
+Authorization: Bearer {{adminToken}}
+
+### Liste des réservations (Admin)
+GET {{baseUrl}}/admin/bookings
+Authorization: Bearer {{adminToken}}
+
+### Mettre à jour statut réservation
+PATCH {{baseUrl}}/admin/bookings/67682c9a62a85c73e65800e0/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "status": "confirmed"
+}
+
+### Créer package Hajj 2025
+POST {{baseUrl}}/admin/packages
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "type": "hajj",
+    "title": "Hajj Premium 2025",
+    "description": "Programme Hajj tout compris 2025 avec services premium et hébergement 5 étoiles",
+    "duration": 21,
+    "startDate": "2025-06-10",
+    "endDate": "2025-07-01",
+    "price": 9500,
+    "capacity": 25,
+    "includes": [
+        "Vol direct Paris-Jeddah aller-retour",
+        "Hôtel 5* à Médine (vue sur Haram)",
+        "Hôtel 5* à La Mecque (vue sur Haram)",
+        "Tentes VIP à Mina",
+        "Transferts en bus VIP climatisé",
+        "Guide francophone expérimenté",
+        "Pension complète premium",
+        "Kit du pèlerin complet",
+        "Assistance médicale 24/7",
+        "Assurance voyage premium"
+    ],
+    "itinerary": [
+        { "day": 1, "description": "Départ de Paris CDG" },
+        { "day": 2, "description": "Arrivée à Médine et installation" },
+        { "day": 3, "description": "Visite des lieux saints de Médine" },
+        { "day": 4, "description": "Programme spirituel à Médine" },
+        { "day": 8, "description": "Départ pour La Mecque" },
+        { "day": 9, "description": "Début des rituels du Hajj" }
+    ]
+}
+
+### Créer package Hajj 2026
+POST {{baseUrl}}/admin/packages
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "type": "hajj",
+    "title": "Hajj Confort 2026",
+    "description": "Programme Hajj 2026 avec excellent rapport qualité-prix",
+    "duration": 18,
+    "startDate": "2026-05-20",
+    "endDate": "2026-06-07",
+    "price": 8200,
+    "capacity": 35,
+    "includes": [
+        "Vol avec escale Paris-Jeddah",
+        "Hôtel 4* à Médine",
+        "Hôtel 4* à La Mecque",
+        "Tentes confortables à Mina",
+        "Transferts en bus climatisé",
+        "Guide francophone",
+        "Pension complète",
+        "Kit du pèlerin",
+        "Assistance médicale",
+        "Assurance voyage"
+    ],
+    "itinerary": [
+        { "day": 1, "description": "Départ de Paris" },
+        { "day": 2, "description": "Arrivée à Médine" },
+        { "day": 3, "description": "Visite de la mosquée du Prophète" },
+        { "day": 7, "description": "Transfert vers La Mecque" },
+        { "day": 8, "description": "Omra d'arrivée" },
+        { "day": 9, "description": "Préparation aux rituels du Hajj" }
+    ]
+}

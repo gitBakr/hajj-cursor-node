@@ -1,0 +1,117 @@
+@baseUrl = https://hajj-cursor-node.onrender.com/api
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzY4MTAwM2VlYjE1OWU5OGExYmU5NzYiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzQ4NzkzMDgsImV4cCI6MTczNDk2NTcwOH0.qPkTpU56UH0LRmRWOmaszwfcghkVUdOSa18gWToqSAw
+
+### 1. Réservation famille (4 personnes)
+POST {{baseUrl}}/bookings/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "packageId": "67682aa062a85c73e6580097",
+    "passengerDetails": [
+        {
+            "firstName": "Ahmed",
+            "lastName": "Ben Ali",
+            "passportNumber": "PA123456",
+            "dateOfBirth": "1980-05-15"
+        },
+        {
+            "firstName": "Fatima",
+            "lastName": "Ben Ali",
+            "passportNumber": "PA123457",
+            "dateOfBirth": "1985-03-20"
+        },
+        {
+            "firstName": "Youssef",
+            "lastName": "Ben Ali",
+            "passportNumber": "PA123458",
+            "dateOfBirth": "2005-07-10"
+        },
+        {
+            "firstName": "Amina",
+            "lastName": "Ben Ali",
+            "passportNumber": "PA123459",
+            "dateOfBirth": "2007-12-25"
+        }
+    ],
+    "contactEmail": "ahmed.benali@example.com",
+    "contactPhone": "+33612345678",
+    "totalPrice": 34000,
+    "specialRequests": "Chambre familiale requise"
+}
+
+### 2. Réservation couple âgé avec assistance
+POST {{baseUrl}}/bookings/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "packageId": "67682aa062a85c73e6580097",
+    "passengerDetails": [
+        {
+            "firstName": "Omar",
+            "lastName": "Safi",
+            "passportNumber": "PS789012",
+            "dateOfBirth": "1950-01-10",
+            "medicalNeeds": "Diabétique"
+        },
+        {
+            "firstName": "Khadija",
+            "lastName": "Safi",
+            "passportNumber": "PS789013",
+            "dateOfBirth": "1953-04-22",
+            "medicalNeeds": "Problèmes de mobilité"
+        }
+    ],
+    "contactEmail": "omar.safi@example.com",
+    "contactPhone": "+33623456789",
+    "totalPrice": 17000,
+    "specialRequests": "Fauteuil roulant nécessaire à l'aéroport, chambre proche des ascenseurs"
+}
+
+### 3. Réservation groupe d'amis
+POST {{baseUrl}}/bookings/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "packageId": "67682aa062a85c73e6580097",
+    "passengerDetails": [
+        {
+            "firstName": "Karim",
+            "lastName": "Hassan",
+            "passportNumber": "PH456789",
+            "dateOfBirth": "1990-08-15"
+        },
+        {
+            "firstName": "Mehdi",
+            "lastName": "Amine",
+            "passportNumber": "PA456790",
+            "dateOfBirth": "1991-03-20"
+        },
+        {
+            "firstName": "Yassin",
+            "lastName": "Rayan",
+            "passportNumber": "PR456791",
+            "dateOfBirth": "1990-11-05"
+        }
+    ],
+    "contactEmail": "karim.hassan@example.com",
+    "contactPhone": "+33634567890",
+    "totalPrice": 25500,
+    "specialRequests": "Chambres communicantes si possible"
+}
+
+### 4. Vérifier toutes les réservations
+GET {{baseUrl}}/admin/bookings
+Authorization: Bearer {{adminToken}}
+
+### 5. Mettre à jour les statuts
+PATCH {{baseUrl}}/admin/bookings/[ID_RESERVATION_FAMILLE]/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "status": "confirmed",
+    "notes": "Paiement reçu, documents vérifiés"
+} 

@@ -1,0 +1,46 @@
+@baseUrl = https://hajj-cursor-node.onrender.com/api
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzY4MTAwM2VlYjE1OWU5OGExYmU5NzYiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzQ4NzkzMDgsImV4cCI6MTczNDk2NTcwOH0.qPkTpU56UH0LRmRWOmaszwfcghkVUdOSa18gWToqSAw
+
+### Test si le serveur est en ligne
+GET {{baseUrl}}/test
+
+### Login Admin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin11@example.com",
+    "password": "admin123"
+}
+
+### Liste des packages publics
+GET {{baseUrl}}/packages
+
+### Liste des packages (Admin)
+GET {{baseUrl}}/admin/packages/all
+Authorization: Bearer {{adminToken}}
+
+### Créer un package test
+POST {{baseUrl}}/admin/packages
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "type": "omra",
+    "title": "Omra Test Production",
+    "description": "Test de l'API en production",
+    "duration": 12,
+    "startDate": "2024-04-15",
+    "endDate": "2024-04-27",
+    "price": 3200,
+    "capacity": 35,
+    "includes": [
+        "Vol direct aller-retour",
+        "Hôtel 5* à Médine",
+        "Hôtel 5* à La Mecque"
+    ],
+    "itinerary": [
+        { "day": 1, "description": "Départ de Paris" },
+        { "day": 2, "description": "Arrivée à Médine" }
+    ]
+} 
