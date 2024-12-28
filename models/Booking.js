@@ -21,8 +21,7 @@ const bookingSchema = new mongoose.Schema({
     totalPrice: { type: Number, required: true },
     bookingNumber: { 
         type: Number,
-        unique: true,
-        required: false
+        sparse: true
     },
     status: {
         type: String,
@@ -34,11 +33,15 @@ const bookingSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
+// Créer l'index après avoir permis les valeurs null
+bookingSchema.index({ bookingNumber: 1 }, { unique: true, sparse: true });
+
 // Middleware pre-save pour générer le bookingNumber
 bookingSchema.pre('save', async function(next) {
     try {
         if (!this.bookingNumber) {
-            const lastBooking = await this.constructor.findOne({}).sort({ bookingNumber: -1 });
+            const lastBooking = await this.constructor.findOne({ bookingNumber: { $exists: true } })
+                .sort({ bookingNumber: -1 });
             this.bookingNumber = lastBooking ? (lastBooking.bookingNumber + 1) : 1000;
         }
         next();
