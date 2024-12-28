@@ -4,12 +4,12 @@ const bookingController = require('../controllers/bookingController');
 const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
 
-// Routes publiques
+// Routes publiques (sans authentification)
+router.post('/create', bookingController.createBooking);  // Réservation sans compte
 router.post('/verify', bookingController.getBookingByNumber);
 
-// Routes authentifiées
+// Routes authentifiées (optionnelles)
 router.use(auth);
-router.post('/create', bookingController.createBooking);
 router.get('/user-bookings', bookingController.getUserBookings);
 
 // Routes admin

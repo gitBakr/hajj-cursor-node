@@ -19,47 +19,18 @@ const bookingController = {
         return res.status(404).json({ message: 'Package non trouvé' });
       }
 
-      // Vérifier les places disponibles
-      if (package.remainingSpots < passengerDetails.length) {
-        return res.status(400).json({ message: 'Places insuffisantes' });
-      }
-
-      // Générer un numéro de réservation unique
-      let bookingNumber;
-      let isUnique = false;
-      let attempts = 0;
-      const maxAttempts = 10;
-
-      while (!isUnique && attempts < maxAttempts) {
-        bookingNumber = Math.floor(Math.random() * (999 - 100 + 1)) + 100;
-        const existingBooking = await Booking.findOne({ bookingNumber });
-        if (!existingBooking) {
-          isUnique = true;
-        }
-        attempts++;
-      }
-
-      if (!isUnique) {
-        return res.status(500).json({ message: 'Impossible de générer un numéro de réservation unique' });
-      }
-
       // Créer la réservation
       const booking = new Booking({
-        bookingNumber,
-        userId: req.user ? req.user.userId : null,
         packageId,
         passengerDetails,
         contactEmail,
         contactPhone,
         totalPrice,
+        userId: req.user ? req.user.userId : null,
         status: 'pending'
       });
 
       await booking.save();
-
-      // Mettre à jour les places restantes
-      package.remainingSpots -= passengerDetails.length;
-      await package.save();
 
       res.status(201).json({ 
         message: 'Réservation créée avec succès',
@@ -67,7 +38,6 @@ const bookingController = {
         booking 
       });
     } catch (error) {
-      console.error('Erreur détaillée:', error);
       res.status(500).json({ 
         message: 'Erreur lors de la création de la réservation',
         error: error.message 
