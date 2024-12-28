@@ -40,9 +40,29 @@ bookingSchema.index({ bookingNumber: 1 }, { unique: true, sparse: true });
 bookingSchema.pre('save', async function(next) {
     try {
         if (!this.bookingNumber) {
-            const lastBooking = await this.constructor.findOne({ bookingNumber: { $exists: true } })
-                .sort({ bookingNumber: -1 });
-            this.bookingNumber = lastBooking ? (lastBooking.bookingNumber + 1) : 1000;
+            let isUnique = false;
+            let newBookingNumber;
+            
+            while (!isUnique) {
+                // Trouver le plus grand numéro existant
+                const lastBooking = await this.constructor.findOne({ 
+                    bookingNumber: { $exists: true } 
+                }).sort({ bookingNumber: -1 });
+                
+                // Générer un nouveau numéro
+                newBookingNumber = lastBooking ? (lastBooking.bookingNumber + 1) : 1000;
+                
+                // Vérifier s'il est unique
+                const existingBooking = await this.constructor.findOne({ 
+                    bookingNumber: newBookingNumber 
+                });
+                
+                if (!existingBooking) {
+                    isUnique = true;
+                }
+            }
+            
+            this.bookingNumber = newBookingNumber;
         }
         next();
     } catch (error) {
