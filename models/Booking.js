@@ -19,7 +19,11 @@ const bookingSchema = new mongoose.Schema({
     contactEmail: { type: String, required: true },
     contactPhone: { type: String, required: true },
     totalPrice: { type: Number, required: true },
-    bookingNumber: { type: String, unique: true },
+    bookingNumber: { 
+        type: Number,
+        unique: true,
+        required: false
+    },
     status: {
         type: String,
         enum: ['pending', 'confirmed', 'cancelled', 'completed'],
@@ -28,6 +32,19 @@ const bookingSchema = new mongoose.Schema({
     specialRequests: String,
     notes: String,
     createdAt: { type: Date, default: Date.now }
+});
+
+// Middleware pre-save pour générer le bookingNumber
+bookingSchema.pre('save', async function(next) {
+    try {
+        if (!this.bookingNumber) {
+            const lastBooking = await this.constructor.findOne({}).sort({ bookingNumber: -1 });
+            this.bookingNumber = lastBooking ? (lastBooking.bookingNumber + 1) : 1000;
+        }
+        next();
+    } catch (error) {
+        next(error);
+    }
 });
 
 module.exports = mongoose.model('Booking', bookingSchema); 
